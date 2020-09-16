@@ -11,7 +11,7 @@ const usersList = (req, res) => {
       res.send(JSON.parse(data));
     })
     .catch(err => {
-      console.log(err)
+      res.status(500).send(`Ошибка чтения файла`);
     })
 }
 
@@ -25,7 +25,7 @@ const sendUser = (req, res) => {
       doesUserExist ? res.send(doesUserExist) : res.status(404).send(`Нет пользователя с таким id`);
     })
     .catch(err => {
-      console.log(err)
+      res.status(500).send(`Ошибка чтения файла`);
     })
 }
 

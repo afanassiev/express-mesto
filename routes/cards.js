@@ -11,7 +11,7 @@ const cardsList = (req, res) => {
       res.send(JSON.parse(data));
     })
     .catch(err => {
-      console.log(err)
+      res.status(500).send(`Ошибка чтения файла`);
     })
 }
 
