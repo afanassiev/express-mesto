@@ -26,6 +26,12 @@ module.exports.sendUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const {name, about, avatar} = req.body
   User.create({name, about, avatar})
-    .then(user => res.send(user))
-    .catch(err => res.status(500).send({message: 'Ошибка!'}))
+    .then(user => res.status(200).send(user))
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({message: 'Ошибка: переданы некорректные данные!'})
+      }
+        res.status(500).send({message: 'Ошибка!'})
+    }
+    )
 }
