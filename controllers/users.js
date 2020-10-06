@@ -19,6 +19,9 @@ module.exports.sendUser = (req, res) => {
       return res.send({data: user});
     })
         .catch(() => {
+          if (err.name === 'DocumentNotFoundError') {
+            res.status(404).send({message: 'Нет пользователя с таким id'})
+          }
           res.status(500).send('Ошибка чтения файла');
     });
 };
@@ -31,7 +34,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({message: 'Ошибка: переданы некорректные данные!'})
       }
-        res.status(500).send({message: 'Ошибка!'})
+        res.status(500).send({message: 'Ошибка на стороне сервера'})
     }
     )
 }

@@ -26,5 +26,11 @@ module.exports.createCard = (req, res) => {
 module.exports.removeCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: 'Ошибка!' }))
+    .catch(err => {
+      if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({message: 'Ошибка: такого документа не существует'})
+      }
+        res.status(500).send({ message: 'Ошибка на стороне сервера' })
+    }
+    )
 }
