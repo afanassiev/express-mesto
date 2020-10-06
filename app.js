@@ -16,9 +16,15 @@ app.use(express.static('public'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use('/', cards);
 app.use('/', users);
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5f7ccf22947cae4f48fd0461'
+  };
+
+  next();
+})
 
 app.all('*', (req, res) => {
   res.status(404).send('Запрашиваемый ресурс не найден');
