@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cards = require('./routes/cards');
 const users = require('./routes/users');
 
@@ -12,6 +13,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 })
 
 app.use(express.static('public'));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/', cards);
 app.use('/', users);
