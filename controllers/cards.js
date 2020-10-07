@@ -2,35 +2,34 @@ const Card = require('../models/card');
 
 module.exports.cardsList = (req, res) => {
   Card.find({})
-    .then(cards => {
+    .then((cards) => {
       res.send(cards);
     })
-    .catch(() => {
-      res.status(500).send('Ошибка чтения файла');
-    });
-}
+    .catch(() => res.status(500).send({ message: 'Ошибка на стороне сервера' }));
+};
 
 module.exports.createCard = (req, res) => {
-  const {name, link} = req.body
-  Card.create({name, link, owner: req.user._id})
-    .then(card => res.send(card))
-    .catch(err => {
+  const { name, link } = req.body;
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => res.status(201).send(card))
+    .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({message: 'Ошибка: переданы некорректные данные!'})
+        return res.status(400).send({ message: 'Ошибка: переданы некорректные данные!' });
       }
-        res.status(500).send({message: 'Ошибка!'})
-    }
-    )
+      return res.status(500).send({ message: 'Ошибка на стороне сервера' });
+    });
 };
 
 module.exports.removeCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
-    .then(card => res.send({ data: card }))
-    .catch(err => {
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({message: 'Ошибка: такого документа не существует'})
+    .orFail(new Error('InvalidID'))
+    .then((card) => {
+      res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.message === 'InvalidID') {
+        return res.status(404).send({ message: 'Такой карточки не существует' });
       }
-        res.status(500).send({ message: 'Ошибка на стороне сервера' })
-    }
-    )
-}
+      return res.status(500).send({ message: 'Ошибка на стороне сервера' });
+    });
+};

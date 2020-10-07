@@ -2,39 +2,34 @@ const User = require('../models/user');
 
 module.exports.usersList = (req, res) => {
   User.find({})
-    .then(users => {
+    .then((users) => {
       res.send(users);
     })
-    .catch(() => {
-      res.status(500).send('Ошибка чтения файла');
-    });
-}
+    .catch(() => res.status(500).send({ message: 'Ошибка на стороне сервера' }));
+};
 
 module.exports.sendUser = (req, res) => {
   User.findById(req.params.id)
-    .then(user => {
-      if (user._id !== req.params.id) {
-        return res.status(404).send('Нет пользователя с таким id');
-      }
-      return res.send({data: user});
+    .orFail(new Error('InvalidID'))
+    .then((user) => {
+      res.send({ data: user });
     })
-        .catch(() => {
-          if (err.name === 'DocumentNotFoundError') {
-            res.status(404).send({message: 'Нет пользователя с таким id'})
-          }
-          res.status(500).send('Ошибка чтения файла');
+    .catch((err) => {
+      if (err.message === 'InvalidID') {
+        res.status(404).send({ message: 'Нет пользователя с таким id' });
+      }
+      res.status(500).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
 module.exports.createUser = (req, res) => {
-  const {name, about, avatar} = req.body
-  User.create({name, about, avatar})
-    .then(user => res.status(200).send(user))
-    .catch(err => {
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.status(201).send(user))
+    .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({message: 'Ошибка: переданы некорректные данные!'})
+        return res.status(400).send({ message: 'Ошибка: переданы некорректные данные!' });
       }
-        res.status(500).send({message: 'Ошибка на стороне сервера'})
-    }
-    )
-}
+      return res.status(500).send({ message: 'Ошибка на стороне сервера' });
+    });
+};
