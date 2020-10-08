@@ -25,7 +25,7 @@ app.use('/', cards);
 app.use('/', users);
 
 app.all('*', (req, res) => {
-  res.status(404).send('Запрашиваемый ресурс не найден');
+  return res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
 app.listen(PORT, () => {

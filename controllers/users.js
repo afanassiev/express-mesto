@@ -16,9 +16,9 @@ module.exports.sendUser = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'InvalidID') {
-        res.status(404).send({ message: 'Нет пользователя с таким id' });
+        return res.status(404).send({ message: 'Нет пользователя с таким id' });
       }
-      res.status(500).send({ message: 'Ошибка на стороне сервера' });
+      return res.status(500).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
